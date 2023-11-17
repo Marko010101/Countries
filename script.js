@@ -1,4 +1,4 @@
-/* 'use strict';
+'use strict';
 
 const btn = document.querySelector('.btn-country');
 const countriesContainer = document.querySelector('.countries');
@@ -68,10 +68,8 @@ const whereAmI = function () {
           const country = countries[0];
           // Render the main country
           renderCountry(country);
-          console.log(country);
           // Get the neighbor country data
           const neighbours = country.borders || [];
-          console.log(neighbours);
           const neighbourPromises = neighbours.map(neighbour =>
             getJSON(`https://restcountries.com/v3.1/alpha/${neighbour}`)
           );
@@ -144,7 +142,6 @@ const getCountryAndNeighbours = function (countryCode) {
 
       // Get the neighbor country data
       const neighbours = country[0].borders || [];
-      console.log(neighbours);
 
       // Map each neighbour to a promise that fetches its data
       const neighbourPromises = neighbours.map(neighbour =>
@@ -168,7 +165,6 @@ const getCountryAndNeighbours = function (countryCode) {
 btn.addEventListener('click', function () {
   whereAmI();
 });
- */
 
 ///////////////////////////////////////
 /// https://countries-api-836d.onrender.com/countries/
@@ -376,33 +372,6 @@ Promise.reject('problem!').catch(x => console.error(x));
 // };
 
 // btn.addEventListener('click', whereAmI);
-
-/* 
-Build the image loading functionality that I just showed you on the screen.
-
-Tasks are not super-descriptive this time, so that you can figure out some stuff on your own. Pretend you're working on your own 😉
-
-PART 1
-1. Create a function 'createImage' which receives imgPath as an input. This function returns a promise which creates a new image (use document.createElement('img')) and sets the .src attribute to the provided image path. When the image is done loading, append it to the DOM element with the 'images' class, and resolve the promise. The fulfilled value should be the image element itself. In case there is an error loading the image ('error' event), reject the promise.
-
-If this part is too tricky for you, just watch the first part of the solution.
-
-PART 2
-2. Comsume the promise using .then and also add an error handler;
-3. After the image has loaded, pause execution for 2 seconds using the wait function we created earlier;
-4. After the 2 seconds have passed, hide the current image (set display to 'none'), and load a second image (HINT: Use the image element returned by the createImage promise to hide the current image. You will need a global variable for that 😉);
-5. After the second image has loaded, pause execution for 2 seconds again;
-6. After the 2 seconds have passed, hide the current image.
-
-TEST DATA: Images in the img folder. Test the error handler by passing a wrong image path. Set the network speed to 'Fast 3G' in the dev tools Network tab, otherwise images load too fast.
-
-GOOD LUCK 😀
-*/
-
-/* 1. Create a function 'createImage' which receives imgPath as an input. This function returns a promise which creates a new image (use document.createElement('img')) and sets the .src attribute to the provided image path. When the image is done loading, append it to the DOM element with the 'images' class, and resolve the promise. The fulfilled value should be the image element itself. In case there is an error loading the image ('error' event), reject the promise.
-
-If this part is too tricky for you, just watch the first part of the solution.
- */
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////SWITCHING PHOTOS EVERY 2s////////////////SEC///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /* const wait = function (seconds) {
