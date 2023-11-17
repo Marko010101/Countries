@@ -14,33 +14,33 @@ const getJSON = function (url, errorMsg = 'Somthing went wrong') {
   });
 };
 
-const getCountryData = function (country) {
-  // Contry 1
-  getJSON(`https://restcountries.com/v3.1/name/${country}`, `Country not found`)
-    .then(data => {
-      renderCountry(data[0]);
+// const getCountryData = function (country) {
+//   // Contry 1
+//   getJSON(`https://restcountries.com/v3.1/name/${country}`, `Country not found`)
+//     .then(data => {
+//       renderCountry(data[0]);
 
-      const neighbour = data[0].borders?.[0];
-      if (!neighbour) throw new Error(`No neighbour found!`);
+//       const neighbour = data[0].borders?.[0];
+//       if (!neighbour) throw new Error(`No neighbour found!`);
 
-      if (neighbour) {
-        return getJSON(
-          `https://restcountries.com/v3.1/alpha/${neighbour}`,
-          `Country not found `
-        );
-      }
-    })
-    .then(data => data && renderCountry(data[0], 'neighbour'))
-    .catch(err => {
-      console.error(`${err} 💥💥💥`);
-      renderError(`Something went wrong 💥 ${err.message}. Try again!`);
-    })
-    .finally(() => {
-      countriesContainer.style.opacity = 1;
-    });
-};
+//       if (neighbour) {
+//         return getJSON(
+//           `https://restcountries.com/v3.1/alpha/${neighbour}`,
+//           `Country not found `
+//         );
+//       }
+//     })
+//     .then(data => data && renderCountry(data[0], 'neighbour'))
+//     .catch(err => {
+//       console.error(`${err} 💥💥💥`);
+//       renderError(`Something went wrong 💥 ${err.message}. Try again!`);
+//     })
+//     .finally(() => {
+//       countriesContainer.style.opacity = 1;
+//     });
+// };
 
-const whereAmI = function () {
+/* const whereAmI = function () {
   if ('geolocation' in navigator) {
     navigator.geolocation.getCurrentPosition(position => {
       const { latitude: lat, longitude: lng } = position.coords;
@@ -91,10 +91,12 @@ const whereAmI = function () {
   } else {
     console.error('Geolocation is not supported by your browser');
   }
-};
+}; */
+
 const renderCountry = function (data, className = '') {
   const flagSrc =
     data.flags && (data.flags.png ? data.flags.png : data.flags.img);
+  countriesContainer.style.opacity = 1;
 
   const html = `
     <article class="country ${className}" data-country-code="${data.cca3}">
@@ -161,10 +163,6 @@ const getCountryAndNeighbours = function (countryCode) {
       console.error('Error fetching country and neighbors:', error);
     });
 };
-
-btn.addEventListener('click', function () {
-  whereAmI();
-});
 
 ///////////////////////////////////////
 /// https://countries-api-836d.onrender.com/countries/
@@ -425,3 +423,56 @@ createImage('img/img-1.jpg')
     currentImg.style.display = 'none';
   })
   .catch(err => console.error(err)); */
+
+const getPosition = function () {
+  return new Promise(function (resolve, reject) {
+    navigator.geolocation.getCurrentPosition(resolve, reject);
+  });
+};
+
+const whereAmI = async function () {
+  try {
+    // Geolocation
+    const pos = await getPosition();
+    const { latitude: lat, longitude: lng } = pos.coords;
+
+    // Reverse geocoding
+    const resGeo = await fetch(
+      `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`
+    );
+    if (!resGeo.ok) throw new Error('Problem getting location data');
+
+    const dataGeo = await resGeo.json();
+    console.log(dataGeo);
+
+    // Country data
+
+    const res = await fetch(
+      `https://restcountries.com/v3.1/name/${dataGeo.countryName}`
+    );
+    if (!res.ok) throw new Error('Problem getting country');
+
+    const data = await res.json();
+    renderCountry(data[0]);
+  } catch (err) {
+    console.error(err);
+    renderError(`${err.message}`);
+
+    // Reject promise returned from async function
+    throw err;
+  }
+};
+
+btn.addEventListener('click', whereAmI);
+
+// (async function () {
+//   try {
+//     const city = await whereAmI();
+//     console.log(`2: ${city}`);
+//   } catch (err) {
+//     console.log(`3: finished getting location`);
+//   }
+// })();
+
+// const city = await whereAmI();
+// console.log(`2: ${city}`);
